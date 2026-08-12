@@ -140,6 +140,3 @@ document.getElementById('accept-cookies').addEventListener('click', function() {
     banner.style.opacity = "0";
 });
 </script>
-
-</body>
-</html>
