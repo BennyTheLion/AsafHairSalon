@@ -18,6 +18,7 @@ if (isset($_POST['add_category']) && $isAdmin) {
     $name_en = $conn->real_escape_string($_POST['name_en']);
     $sort_order = intval($_POST['sort_order']);
     $conn->query("INSERT INTO categories (name_he, name_en, sort_order) VALUES ('$name_he','$name_en',$sort_order)");
+    logAction('Added category', $name_he);
 }
 
 if (isset($_POST['add_service']) && $isAdmin) {
@@ -41,13 +42,18 @@ if (isset($_POST['add_service']) && $isAdmin) {
     }
     $conn->query("INSERT INTO services (title, category_id, base_price, materials_fee, duration, short_description, description, image_url) 
                  VALUES ('$title', $category_id, $base_price, $materials_fee, $duration, '$short_description', '$description', '$image_url')");
+    logAction('Added service', $title);
 }
 
 if ($isAdmin && isset($_GET['delete_category'])) {
-    $conn->query("DELETE FROM categories WHERE id=" . intval($_GET['delete_category']));
+    $id = intval($_GET['delete_category']);
+    $conn->query("DELETE FROM categories WHERE id=$id");
+    logAction('Deleted category', "ID: $id");
 }
 if ($isAdmin && isset($_GET['delete_service'])) {
-    $conn->query("DELETE FROM services WHERE id=" . intval($_GET['delete_service']));
+    $id = intval($_GET['delete_service']);
+    $conn->query("DELETE FROM services WHERE id=$id");
+    logAction('Deleted service', "ID: $id");
 }
 
 if ($isAdmin && isset($_POST['upload_service_image']) && isset($_FILES['service_image'])) {
