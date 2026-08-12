@@ -45,6 +45,7 @@ if ($action === 'add') {
     $newId = $stmt->insert_id;
     $stmt->close();
 
+    logAction('Added before/after', $title_he);
     echo json_encode(['success' => true, 'id' => $newId, 'message' => 'נוסף בהצלחה']);
     exit();
 }

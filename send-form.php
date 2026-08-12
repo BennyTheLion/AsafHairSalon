@@ -212,6 +212,9 @@ try {
 }
 
 // ================== RETURN JSON ==================
+if ($response['success']) {
+    clientLog('Contact form submitted', $name . ' - ' . $phone . ' - ' . ($service_label ?: 'no service'));
+}
 echo json_encode($response);
 exit;
 ?>
