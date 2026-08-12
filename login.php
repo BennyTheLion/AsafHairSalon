@@ -67,24 +67,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html dir="rtl" lang="he">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Admin Panel</title>
 <style>
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #2c2c2c, #444);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
 .login-container {
     background: white;
     padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px #ccc;
-    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    width: 380px;
+    max-width: 100%;
 }
 
 .login-container h2 {
@@ -96,63 +99,42 @@ body {
 .login-container input[type="text"],
 .login-container input[type="password"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 8px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 2px solid #e8e4e0;
     box-sizing: border-box;
+    font-size: 16px;
 }
+.login-container input:focus { outline: none; border-color: #c8a97e; }
 
 .login-container button.submit-btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     background: #c8a97e;
     color: white;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
+    transition: background 0.3s;
 }
+.login-container button.submit-btn:hover { background: #8b7355; }
 
-.login-container button.submit-btn:hover {
-    background: #b89266;
-}
-
-.password-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 8px 0;
-}
-
-.password-container input[type="password"] {
-    flex: 1;
-}
-
+.password-container { display: flex; align-items: center; gap: 5px; margin: 8px 0; }
+.password-container input[type="password"] { flex: 1; }
 .password-container button.toggle-btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background: #ccc;
-    cursor: pointer;
+    padding: 12px 15px; border: none; border-radius: 8px; background: #e8e4e0; cursor: pointer; font-size: 18px;
 }
+.login-container .checkbox-container { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+.error { color: #e74c3c; margin-bottom: 10px; text-align: center; font-size: 14px; }
 
-.password-container button.toggle-btn:hover {
-    background: #bbb;
-}
-
-.login-container .checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 8px 0;
-}
-
-.error {
-    color: red;
-    margin-bottom: 10px;
-    text-align: center;
+@media (max-width: 480px) {
+    body { padding: 12px; align-items: flex-start; padding-top: 40px; }
+    .login-container { padding: 24px 20px; border-radius: 10px; }
+    .login-container h2 { font-size: 20px; }
 }
 </style>
 </head>

@@ -132,10 +132,31 @@ button:hover,.btn:hover{background:#8b7355;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;}
 .chip{padding:8px 16px;border:2px solid #ddd;border-radius:20px;cursor:pointer;font-size:13px;background:#fff;transition:.2s;}
 .chip:hover,.chip.active{background:#c8a97e;color:#fff;border-color:#c8a97e;}
-@media(max-width:900px){.sidebar{width:60px;}.sidebar a span{display:none;}.sidebar h3{font-size:0;padding:10px;}.sidebar h3:after{content:'☰';font-size:22px;}.main{margin-right:60px;max-width:calc(100% - 60px);}}
-</style>
+.hamburger{display:none;position:fixed;top:15px;right:15px;z-index:200;background:#c8a97e;color:#fff;border:none;width:40px;height:40px;border-radius:8px;font-size:22px;cursor:pointer;}
+@media(max-width:900px){
+ .sidebar{width:60px;transition:width 0.3s;}
+ .sidebar.open{width:220px;}
+ .sidebar a span{display:none;}
+ .sidebar.open a span{display:inline;}
+ .sidebar h3{font-size:0;padding:10px;}
+ .sidebar.open h3{font-size:18px;}
+ .sidebar h3:after{content:'☰';font-size:22px;}
+ .sidebar.open h3:after{content:'';}
+ .main{margin-right:60px;max-width:calc(100% - 60px);}
+ .hamburger{display:block;}
+}
+@media(max-width:500px){
+ .main{padding:15px 10px;margin-right:0;max-width:100%;}
+ .sidebar{width:0;overflow:hidden;}
+ .sidebar.open{width:220px;}
+ .topbar{flex-direction:column;gap:8px;font-size:14px;}
+ table{font-size:12px;}
+ th,td{padding:6px 4px;}
+}
 </head>
 <body>
+
+<button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
 
 <div class="sidebar">
     <h3>ניהול</h3>
