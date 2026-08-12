@@ -144,6 +144,7 @@ button:hover,.btn:hover{background:#8b7355;}
     <a href="#" onclick="showTab('categories',this)"><span class="icon">📂</span> <span>קטגוריות</span></a>
     <a href="#" onclick="showTab('services',this)"><span class="icon">💇</span> <span>שירותים</span></a>
     <a href="#" onclick="showTab('beforeafter',this)"><span class="icon">🔄</span> <span>לפני / אחרי</span></a>
+    <a href="#" onclick="showTab('logs',this)"><span class="icon">📋</span> <span>יומן פעולות</span></a>
     <a href="logout.php" style="margin-top:auto;border-top:1px solid #444;padding-top:14px;"><span class="icon">🚪</span> <span>התנתק</span></a>
 </div>
 
@@ -304,6 +305,26 @@ button:hover,.btn:hover{background:#8b7355;}
         <td contenteditable="<?=$isAdmin?'true':'false'?>" onblur="updateBAField(<?=$ba['id']?>,'sort_order',this.innerText)"><?=$ba['sort_order']?></td>
         <td contenteditable="<?=$isAdmin?'true':'false'?>" onblur="updateBAField(<?=$ba['id']?>,'is_active',this.innerText)"><?=$ba['is_active']?></td>
         <?php if($isAdmin): ?><td><a href="#" onclick="deleteBA(<?=$ba['id']?>);return false;" class="btn btn-sm btn-danger">מחק</a></td><?php endif; ?>
+    </tr>
+    <?php endwhile; ?>
+    </table></div>
+</div>
+
+<!-- LOGS -->
+<div class="tab" id="tab-logs">
+    <div class="card"><h2>יומן פעולות</h2>
+    <table>
+    <tr><th>תאריך</th><th>משתמש</th><th>פעולה</th><th>פרטים</th><th>IP</th></tr>
+    <?php
+    $logs = $conn->query("SELECT * FROM admin_logs ORDER BY created_at DESC LIMIT 200");
+    while($l = $logs->fetch_assoc()):
+    ?>
+    <tr>
+        <td style="white-space:nowrap;font-size:12px;"><?= htmlspecialchars($l['created_at']) ?></td>
+        <td><?= htmlspecialchars($l['username']) ?></td>
+        <td><?= htmlspecialchars($l['action']) ?></td>
+        <td style="font-size:12px;"><?= htmlspecialchars($l['details']) ?></td>
+        <td style="font-size:11px;direction:ltr;text-align:left;"><?= htmlspecialchars($l['ip']) ?></td>
     </tr>
     <?php endwhile; ?>
     </table></div>

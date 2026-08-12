@@ -93,6 +93,8 @@ try {
         throw new Exception("Insert failed: " . $conn->error);
     }
 
+    clientLog('Booked appointment', $customer['name'] . ' - ' . $service['name'] . ' on ' . $date . ' at ' . $startTime);
+
     echo json_encode([
         "success" => true,
         "message" => "Appointment booked successfully",

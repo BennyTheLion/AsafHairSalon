@@ -52,4 +52,14 @@ function logAction($action, $details = '') {
     $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES ($uid, '$user', '$act', '$det', '$ip')");
     closeDbConnection();
 }
+
+function clientLog($action, $details = '') {
+    $conn = getDbConnection();
+    if (!$conn) return;
+    $act = $conn->real_escape_string($action);
+    $det = $conn->real_escape_string($details);
+    $ip = $conn->real_escape_string($_SERVER['REMOTE_ADDR'] ?? '');
+    $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES (0, 'Client', '$act', '$det', '$ip')");
+    closeDbConnection();
+}
 ?>
