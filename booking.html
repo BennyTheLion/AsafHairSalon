@@ -60,10 +60,43 @@
         .debug-panel h4 { color: #ff0; margin-bottom: 10px; }
         
         @media (max-width: 768px) {
-            .grid-3 { grid-template-columns: 1fr; }
-            .cal-nav { flex-direction: column; }
-            .calendar { font-size: 12px; }
-            .cal-day { padding: 6px; }
+            .container { padding: 10px; }
+            .header { padding: 20px 15px; border-radius: 12px; }
+            .header h1 { font-size: 24px; }
+            .header p { font-size: 14px; }
+            .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+            .card { padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+            .card h2 { font-size: 18px; }
+            .chips-wrapper { gap: 6px; }
+            .chip { padding: 8px 14px; font-size: 13px; }
+            .service-card { padding: 14px; }
+            .service-name { font-size: 16px; }
+            .price { font-size: 18px; }
+            .cal-nav { flex-direction: column; gap: 10px; }
+            .cal-nav h3 { font-size: 16px; }
+            .calendar { font-size: 12px; gap: 4px; }
+            .cal-header { padding: 8px 4px; font-size: 11px; }
+            .cal-day { padding: 8px 4px; font-size: 13px; border-radius: 6px; }
+            .time-slots { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+            .time-slot { padding: 10px 8px; font-size: 13px; }
+            input { padding: 10px; font-size: 15px; }
+            .btn { padding: 10px 20px; font-size: 14px; width: 100%; }
+            .summary { padding: 14px; }
+            .summary h3 { font-size: 15px; }
+            .success { padding: 40px 15px; }
+            .success-icon { width: 60px; height: 60px; font-size: 30px; }
+        }
+
+        @media (max-width: 480px) {
+            .header { padding: 15px 10px; }
+            .header h1 { font-size: 20px; }
+            .card { padding: 12px; }
+            .calendar { font-size: 11px; gap: 2px; }
+            .cal-day { padding: 6px 2px; font-size: 12px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
+            .cal-header { padding: 6px 2px; font-size: 10px; }
+            .time-slots { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .time-slot { padding: 8px 4px; font-size: 12px; }
+            .calendar { grid-template-columns: repeat(7, 1fr); }
         }
     </style>
 </head>

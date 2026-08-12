@@ -26,12 +26,12 @@ function getDbConnection() {
         return $conn;
     }
     
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $conn = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     
     // בדיקת חיבור
-    if ($conn->connect_error) {
+    if (!$conn || $conn->connect_error) {
         // נחזיר שגיאה בלי לעצור את התוכנית
-        error_log("Database connection failed: " . $conn->connect_error);
+        error_log("Database connection failed");
         return false;
     }
     
