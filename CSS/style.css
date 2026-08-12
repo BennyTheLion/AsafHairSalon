@@ -1232,7 +1232,7 @@
        .ba-arrow-left,
        .ba-arrow-right {
            font-size: 0.7rem;
-           color: var(--accent-color);
+           color: #8b7355;
            line-height: 1;
        }
 

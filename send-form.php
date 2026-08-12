@@ -15,6 +15,7 @@ require __DIR__ . '/PHPMailer/Exception.php';
 
 // CORS (optional)
 $allowed_origins = [
+    'https://steelblue-seahorse-742958.hostingersite.com',
     'https://nadlanisteam.co.il',
     'http://localhost',
     'http://127.0.0.1'
