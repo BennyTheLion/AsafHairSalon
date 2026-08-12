@@ -12,6 +12,7 @@ use PHPMailer\PHPMailer\Exception;
 require __DIR__ . '/PHPMailer/PHPMailer.php';
 require __DIR__ . '/PHPMailer/SMTP.php';
 require __DIR__ . '/PHPMailer/Exception.php';
+if (!function_exists('clientLog')) { function clientLog($a,$d=''){} }
 
 // CORS (optional)
 $allowed_origins = [

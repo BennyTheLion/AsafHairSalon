@@ -4,6 +4,10 @@ ini_set('display_errors', 1);
 session_start();
 require_once "config.php";
 
+// Fallback if server config.php lacks logging functions
+if (!function_exists('logAction')) { function logAction($a,$d=''){} }
+if (!function_exists('clientLog')) { function clientLog($a,$d=''){} }
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();

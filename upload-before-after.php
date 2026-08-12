@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "config.php";
+if (!function_exists('logAction')) { function logAction($a,$d=''){} }
 
 // Auth check
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
