@@ -338,7 +338,7 @@
 					  </label>
 					</div>
 					<br>
-                    <div class="g-recaptcha" data-sitekey="<?= RECAPTCHA_SITE_KEY ?>" style="display:flex;justify-content:center;margin-bottom:10px;"></div>
+                    <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" style="display:flex;justify-content:center;margin-bottom:10px;"></div>
                     <button type="submit" class="btn btn-large" style="width: 100%;">הזמיני תור ✨ </button>
                      
                      <div id="formMessage" class="form-message"></div>
