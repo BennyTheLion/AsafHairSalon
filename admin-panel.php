@@ -134,11 +134,11 @@ button:hover,.btn:hover{background:#8b7355;}
 @media(max-width:768px){
  .sidebar{display:none;}
  .hamburger{display:block;}
- .main{margin-right:0;max-width:100%;padding:70px 10px 10px;}
+ .main{margin-right:0;max-width:100%;padding:70px 8px 10px;}
  .topbar{flex-direction:column;gap:5px;}
- .card{padding:12px;}
- table{min-width:520px;}
- th,td{padding:5px;}
+ .card{padding:10px;}
+ table{display:block;overflow-x:auto;max-width:100%;min-width:100%;}
+ th,td{padding:5px 6px;white-space:nowrap;}
 }
 </style>
 </head>
