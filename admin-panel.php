@@ -310,7 +310,7 @@ while($ba = $baItems->fetch_assoc()):
 <?php endwhile; ?>
 </table>
 
-<h2>יומן תורים</h2>
+<h2 id="calendar">יומן תורים</h2>
 <?php
 $months_he = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
@@ -321,9 +321,9 @@ $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
 $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
 ?>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <a href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">&lt; חודש קודם</a>
+    <a href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>#calendar" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">&lt; חודש קודם</a>
     <strong><?= $months_he[$currentMonth-1] ?> <?= $currentYear ?></strong>
-    <a href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">חודש הבא &gt;</a>
+    <a href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>#calendar" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">חודש הבא &gt;</a>
 </div>
 <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
 <tr><?php foreach(['א','ב','ג','ד','ה','ו','ש'] as $hd) echo "<th style=\"background:#c8a97e;color:white;padding:8px;text-align:center;\">$hd</th>"; ?></tr>
