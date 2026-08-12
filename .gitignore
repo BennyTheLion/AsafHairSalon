@@ -1,15 +1,3 @@
-# Sensitive config (passwords, API keys)
-config.php
-
-# Uploaded images (user content)
-uploads/
-
-# User data
-leads.csv
-
-# Dependencies
-PHPMailer/
-
 # IDE / OS
 .vscode/
 .idea/
