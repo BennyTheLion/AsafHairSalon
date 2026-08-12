@@ -17,6 +17,10 @@ define('DB_USER', 'u880968607_Asaf');
 define('DB_PASS', 'REVOKED_DB_PASSWORD');
 define('DB_CHARSET', 'utf8mb4');
 
+// Google reCAPTCHA v2 keys
+define('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
+define('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
+
 function getDbConnection() {
     global $conn;
     if (isset($conn) && is_object($conn) && $conn->ping()) return $conn;
