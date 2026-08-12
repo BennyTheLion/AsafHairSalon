@@ -114,6 +114,23 @@ $services = $conn->query("
     ORDER BY s.id DESC
 ");
 
+// --- FETCH APPOINTMENTS ---
+$currentMonth = isset($_GET['month']) ? intval($_GET['month']) : intval(date('m'));
+$currentYear = isset($_GET['year']) ? intval($_GET['year']) : intval(date('Y'));
+$appointmentsQuery = $conn->query("
+    SELECT * FROM appointments 
+    WHERE status != 'cancelled' 
+    AND MONTH(appointment_date) = $currentMonth 
+    AND YEAR(appointment_date) = $currentYear
+    ORDER BY appointment_date, start_time
+");
+$appointments = [];
+while ($apt = $appointmentsQuery->fetch_assoc()) {
+    $d = $apt['appointment_date'];
+    if (!isset($appointments[$d])) $appointments[$d] = [];
+    $appointments[$d][] = $apt;
+}
+
 ?>
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -291,6 +308,49 @@ while($ba = $baItems->fetch_assoc()):
     <?php endif; ?>
 </tr>
 <?php endwhile; ?>
+</table>
+
+<h2>יומן תורים</h2>
+<?php
+$months_he = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+$daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+$firstDay = date('w', strtotime("$currentYear-$currentMonth-01"));
+$prevMonth = $currentMonth == 1 ? 12 : $currentMonth - 1;
+$prevYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+$nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
+$nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+?>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <a href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">&lt; חודש קודם</a>
+    <strong><?= $months_he[$currentMonth-1] ?> <?= $currentYear ?></strong>
+    <a href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>" style="padding:6px 14px;background:#c8a97e;color:white;border-radius:6px;text-decoration:none;">חודש הבא &gt;</a>
+</div>
+<table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+<tr><?php foreach(['א','ב','ג','ד','ה','ו','ש'] as $hd) echo "<th style=\"background:#c8a97e;color:white;padding:8px;text-align:center;\">$hd</th>"; ?></tr>
+<tr>
+<?php
+$dayCount = 1;
+for ($i = 0; $i < $firstDay; $i++) { echo "<td style=\"background:#f9f9f9;\"></td>"; $dayCount++; }
+for ($d = 1; $d <= $daysInMonth; $d++) {
+    $dateStr = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $d);
+    $hasApps = isset($appointments[$dateStr]);
+    $todayBg = date('Y-m-d') === $dateStr ? 'background:#fef9f0;' : '';
+    echo "<td style=\"vertical-align:top;height:90px;padding:3px;border:1px solid #ddd;font-size:11px;$todayBg\"><b>$d</b>";
+    if ($hasApps) {
+        foreach ($appointments[$dateStr] as $apt) {
+            $sc = $apt['status']==='confirmed'?'#2ecc71':($apt['status']==='completed'?'#3498db':'#e74c3c');
+            echo "<div style=\"background:#f0f8ff;border-right:3px solid $sc;padding:2px 3px;margin:1px 0;font-size:10px;line-height:1.3;\">";
+            echo "<b>" . htmlspecialchars(substr($apt['start_time'],0,5)) . "</b> " . htmlspecialchars($apt['customer_name']);
+            echo "</div>";
+        }
+    }
+    echo "</td>";
+    if ($dayCount % 7 == 0) echo "</tr><tr>";
+    $dayCount++;
+}
+while ($dayCount % 7 != 1) { echo "<td style=\"background:#f9f9f9;\"></td>"; $dayCount++; }
+?>
+</tr>
 </table>
 
 </div>
