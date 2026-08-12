@@ -140,6 +140,7 @@ button:hover,.btn:hover{background:#8b7355;}
  table{min-width:520px;}
  th,td{padding:5px;}
 }
+</style>
 </head>
 <body>
 
