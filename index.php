@@ -1031,7 +1031,10 @@
     window.addEventListener('message', function(e) {
         if (e.data && e.data.type === 'bookingHeight') {
             var frame = document.getElementById('bookingFrame');
-            if (frame) frame.style.height = e.data.height + 'px';
+            if (frame) {
+                frame.style.height = e.data.height + 'px';
+                frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     });
     </script>
