@@ -179,9 +179,12 @@ button:hover,.btn:hover{background:#8b7355;}
 <div class="tab active" id="tab-dashboard">
     <div class="card"><h2>לוח בקרה</h2>
     <?php
-    $totalApts = $conn->query("SELECT COUNT(*) as c FROM appointments")->fetch_assoc()['c'];
-    $totalServices = $conn->query("SELECT COUNT(*) as c FROM services")->fetch_assoc()['c'];
-    $todayApts = $conn->query("SELECT COUNT(*) as c FROM appointments WHERE appointment_date = CURDATE() AND status != 'cancelled'")->fetch_assoc()['c'];
+    $ta = $conn->query("SELECT COUNT(*) as c FROM appointments");
+    $totalApts = $ta ? $ta->fetch_assoc()['c'] : 0;
+    $ts = $conn->query("SELECT COUNT(*) as c FROM services");
+    $totalServices = $ts ? $ts->fetch_assoc()['c'] : 0;
+    $td = $conn->query("SELECT COUNT(*) as c FROM appointments WHERE appointment_date = CURDATE() AND status != 'cancelled'");
+    $todayApts = $td ? $td->fetch_assoc()['c'] : 0;
     ?>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-top:15px;">
         <div class="card" style="text-align:center;background:linear-gradient(135deg,#c8a97e,#8b7355);color:#fff;"><h1><?=$totalApts?></h1><p>סה"כ תורים</p></div>
