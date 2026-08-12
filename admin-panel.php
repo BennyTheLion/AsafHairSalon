@@ -338,7 +338,7 @@ button:hover,.btn:hover{background:#8b7355;}
     <tr><th>תאריך</th><th>משתמש</th><th>פעולה</th><th>פרטים</th><th>IP</th></tr>
     <?php
     $logs = $conn->query("SELECT * FROM admin_logs ORDER BY created_at DESC LIMIT 200");
-    while($l = $logs->fetch_assoc()):
+    if ($logs) while($l = $logs->fetch_assoc()):
     ?>
     <tr>
         <td style="white-space:nowrap;font-size:12px;"><?= htmlspecialchars($l['created_at']) ?></td>
