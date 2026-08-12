@@ -22,15 +22,19 @@ define('DB_CHARSET', 'utf8mb4');
 function getDbConnection() {
     global $conn;
     
-    if (isset($conn) && $conn->ping()) {
+    if (isset($conn) && is_object($conn) && $conn->ping()) {
         return $conn;
     }
     
-    $conn = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    try {
+        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    } catch (mysqli_sql_exception $e) {
+        error_log("Database connection failed");
+        return false;
+    }
     
     // בדיקת חיבור
-    if (!$conn || $conn->connect_error) {
-        // נחזיר שגיאה בלי לעצור את התוכנית
+    if ($conn->connect_error) {
         error_log("Database connection failed");
         return false;
     }

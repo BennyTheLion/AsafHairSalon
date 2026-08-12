@@ -385,18 +385,6 @@
         </div>
     </section>
 
-    <section class="services">
-        <div class="container">
-            <h2 id="togglePrice">הצג מחירים</h2>
-            <table class="services-table" id="services-table" aria-label="טבלת שירותים ומחירים">
-                <thead>
-                    <tr><th>שירות</th><th>משך משוער</th><th>מחיר (₪)</th></tr>
-                </thead>
-                <tbody id="servicesTableBody"></tbody>
-            </table>
-        </div>
-    </section>
-
 <!-- 🛡️ Popup מדיניות פרטיות -->
 <?php include 'privacy.php'; ?>
 
@@ -713,14 +701,9 @@
         ];
         
         function initServicesUI() {
-            const tbody = document.getElementById('servicesTableBody');
             const sel = document.getElementById('serviceSelect');
             
             SERVICES.forEach(s => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${s.label}</td><td>${s.duration} ד'</td><td>${s.price} ₪</td>`;
-                tbody.appendChild(tr);
-                
                 const opt = document.createElement('option');
                 opt.value = s.id;
                 opt.textContent = `${s.label} — ${s.price} ₪ / ${s.duration} ד'`;
@@ -749,11 +732,6 @@
                 document.getElementById('serviceDuration').value = '';
             }
         }
-        
-        document.getElementById('togglePrice').addEventListener('click', function() {
-            const table = document.getElementById('services-table');
-            table.style.display = table.style.display === 'none' ? 'table' : 'none';
-        });
         
         
         
