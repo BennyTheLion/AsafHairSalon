@@ -13,15 +13,10 @@ define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 
 // Database configuration for Hostinger
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'AsafHairSalon');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'u880968607_AsafHairSalon');
+define('DB_USER', 'u880968607_Asaf');
+define('DB_PASS', 'REVOKED_DB_PASSWORD');
 define('DB_CHARSET', 'utf8mb4');
-
-// Google reCAPTCHA v2 keys — get yours at https://www.google.com/recaptcha/admin
-define('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');   // TODO: replace with your real site key
-define('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'); // TODO: replace with your real secret key
-// (current keys are Google's test keys — always pass verification)
 
 // פונקציה לחיבור עם mysqli
 function getDbConnection() {
