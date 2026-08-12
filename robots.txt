@@ -1,0 +1,13 @@
+# ===== קובץ robots.txt =====
+# שמור כ: robots.txt בתיקיית השורש
+
+User-agent: *
+Allow: /
+Disallow: /send-form.php
+Disallow: /leads.txt
+
+# Sitemap location
+Sitemap: https://nadlanisteam.co.il/sitemap.xml
+
+# Crawl delay (אופציונלי)
+Crawl-delay: 1

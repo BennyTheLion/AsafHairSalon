@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת זימון תורים - אסף מספרה וסטיילינג</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', 'Arial', sans-serif; background: #f8f5f2; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; padding: 30px; background: linear-gradient(135deg, #c8a97e, #8b7355); border-radius: 20px; color: white; }
+        .header h1 { font-size: 36px; margin-bottom: 10px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease; }
+        .btn-primary { background: #c8a97e; color: white; }
+        .btn-primary:hover { background: #8b7355; transform: translateY(-2px); }
+        .btn-secondary { background: white; border: 2px solid #c8a97e; color: #c8a97e; }
+        .card { background: white; border-radius: 16px; padding: 28px; margin-bottom: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .chips-wrapper { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        .chip { padding: 10px 20px; border: 2px solid #e8e4e0; border-radius: 50px; background: white; cursor: pointer; font-size: 14px; font-weight: 500; color: #555; transition: all 0.25s ease; white-space: nowrap; text-decoration: none; display: inline-block; }
+        .chip:hover { border-color: #c8a97e; color: #c8a97e; background: #fef9f0; }
+        .chip.active { background: #c8a97e; color: white; border-color: #c8a97e; }
+        .grid { display: grid; gap: 20px; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .service-card { padding: 20px; border: 2px solid #e8e4e0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; background: white; }
+        .service-card:hover { border-color: #c8a97e; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .service-card.selected { border-color: #c8a97e; background: linear-gradient(135deg, #fef9f0, #fff); }
+        .service-card.popular { border-top: 4px solid #c8a97e; }
+        .service-card.featured { border-top: 4px solid #8b7355; }
+        .badge-container { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; color: white; }
+        .badge.popular { background: #c8a97e; }
+        .badge.featured { background: #8b7355; }
+        .service-name { font-size: 18px; font-weight: bold; color: #2c2c2c; margin-bottom: 10px; }
+        .service-desc { color: #8b7355; font-size: 14px; margin-bottom: 15px; line-height: 1.4; }
+        .service-info { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0ece8; }
+        .price { color: #c8a97e; font-weight: bold; font-size: 20px; }
+        .duration { color: #8b7355; font-size: 14px; }
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
+        .cal-header { text-align: center; font-weight: bold; padding: 12px; background: #faf8f6; border-radius: 8px; color: #8b7355; }
+        .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-day { padding: 12px; text-align: center; border-radius: 8px; cursor: pointer; background: white; border: 1px solid #e8e4e0; }
+        .cal-day:hover:not(.empty):not(.past) { background: #fef9f0; border-color: #c8a97e; }
+        .cal-day.past { background: #f5f2ef; color: #bbb; cursor: not-allowed; }
+        .cal-day.selected { background: #c8a97e; color: white; border-color: #c8a97e; }
+        .cal-day.empty { visibility: hidden; }
+        .time-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        .time-slot { padding: 12px; border: 2px solid #e8e4e0; border-radius: 8px; text-align: center; cursor: pointer; background: white; font-weight: 500; }
+        .time-slot:hover { border-color: #c8a97e; background: #fef9f0; transform: translateY(-2px); }
+        .time-slot.selected { background: #c8a97e; color: white; }
+        input { width: 100%; padding: 12px; border: 2px solid #e8e4e0; border-radius: 8px; font-size: 16px; margin-bottom: 16px; }
+        input:focus { outline: none; border-color: #c8a97e; }
+        .summary { background: #faf8f6; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .summary p { margin-bottom: 10px; }
+        .success { text-align: center; padding: 60px 20px; }
+        .success-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; background: linear-gradient(135deg, #c8a97e, #8b7355); display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #c8a97e; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-slots { text-align: center; padding: 40px; color: #999; }
+        .debug-panel { background: #1e1e1e; color: #0f0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; margin-top: 20px; max-height: 300px; overflow-y: auto; direction: ltr; text-align: left; }
+        .debug-panel h4 { color: #ff0; margin-bottom: 10px; }
+        
+        @media (max-width: 768px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .cal-nav { flex-direction: column; }
+            .calendar { font-size: 12px; }
+            .cal-day { padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+    let debugLogs = [];
+    
+    function addDebugLog(message) {
+        debugLogs.unshift({time: new Date().toLocaleTimeString(), message: message});
+        if (debugLogs.length > 100) debugLogs.pop();
+        updateDebugPanel();
+        console.log(message);
+    }
+    
+    function updateDebugPanel() {
+        const panel = document.getElementById('debug-panel');
+        if (panel) {
+            panel.innerHTML = '<h4>📋 Debug Console:</h4>' + 
+                debugLogs.slice(0, 30).map(log => `<div>[${log.time}] ${log.message}</div>`).join('');
+        }
+    }
+    
+    // State
+    let state = {
+        view: 'client',
+        services: [],
+        categories: [],
+        selectedCategoryId: null,
+        appointments: [],
+        selectedService: null,
+        selectedDate: null,
+        selectedTime: null,
+        currentMonth: new Date(),
+        customerInfo: {name: '', phone: '', email: ''},
+        settings: {
+            workHours: {start: 9, end: 20},
+            businessName: 'אסף - מספרה וסטיילינג'
+        },
+        isLoading: true,
+        error: null
+    };
+
+    async function fetchServicesFromDB() {
+        try {
+            const response = await fetch('get-services.php');
+            const data = await response.json();
+            if (data.success) {
+                state.services = data.services;
+                state.categories = data.categories || [];
+                state.error = null;
+                addDebugLog(`✅ Loaded ${state.services.length} services`);
+                return true;
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            addDebugLog(`❌ Error: ${error.message}`);
+            state.error = 'לא ניתן לטעון את השירותים';
+            return false;
+        }
+    }
+
+    async function fetchAppointments() {
+        try {
+            const response = await fetch('get-appointments.php');
+            const data = await response.json();
+            if (data.success) {
+                state.appointments = data.appointments;
+                addDebugLog(`📅 Loaded ${state.appointments.length} appointments`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            addDebugLog(`❌ Appointment fetch error: ${error.message}`);
+            return false;
+        }
+    }
+
+    async function bookAppointmentInDB(appointment) {
+        try {
+            const response = await fetch('book-appointment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(appointment)
+            });
+            return await response.json();
+        } catch (error) {
+            return {success: false, message: error.message};
+        }
+    }
+
+    // Helper function to calculate end time
+    function calculateEndTime(startTime, durationMins) {
+        const [hours, minutes] = startTime.split(':');
+        const startTotalMins = (parseInt(hours) * 60 + parseInt(minutes));
+        const endTotalMins = startTotalMins + durationMins;
+        const endHours = Math.floor(endTotalMins / 60);
+        const endMins = endTotalMins % 60;
+        return `${endHours.toString().padStart(2,'0')}:${endMins.toString().padStart(2,'0')}`;
+    }
+
+
+function getAvailableSlots(date, duration) {
+
+    if (!date || !duration) {
+        addDebugLog('❌ Missing date or duration');
+        return [];
+    }
+
+    // force number
+    duration = parseInt(duration);
+
+    const slots = [];
+
+    // FIXED: local date instead of UTC ISO
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const dateStr = `${year}-${month}-${day}`;
+
+    addDebugLog(`🔍 Checking availability for ${dateStr}`);
+    addDebugLog(`⏱ Duration: ${duration}`);
+
+    // appointments for selected day
+    const dayAppointments = state.appointments.filter(apt => {
+
+        if (!apt.date) return false;
+
+        return (
+            apt.date.trim() === dateStr &&
+            apt.status !== 'cancelled'
+        );
+    });
+
+    addDebugLog(`📅 Found ${dayAppointments.length} appointments`);
+
+    // convert HH:MM to minutes
+    function timeToMinutes(time) {
+
+        if (!time) return 0;
+
+        const parts = time.split(':');
+
+        const hours = parseInt(parts[0]) || 0;
+        const minutes = parseInt(parts[1]) || 0;
+
+        return hours * 60 + minutes;
+    }
+
+    // business hours
+    const openMinutes = state.settings.workHours.start * 60;
+    const closeMinutes = state.settings.workHours.end * 60;
+
+    addDebugLog(`🏢 Business hours ${openMinutes} -> ${closeMinutes}`);
+
+    // every 30 minutes
+    for (
+        let current = openMinutes;
+        current + duration <= closeMinutes;
+        current += 30
+    ) {
+
+        const slotStart = current;
+        const slotEnd = current + duration;
+
+        let blocked = false;
+
+        for (const apt of dayAppointments) {
+
+            // calculate appointment times
+            const aptStart = timeToMinutes(apt.startTime);
+
+            let aptEnd;
+
+            // if DB has endTime use it
+            if (apt.endTime) {
+                aptEnd = timeToMinutes(apt.endTime);
+            }
+            else {
+
+                // fallback duration
+                const aptDuration =
+                    parseInt(apt.duration) ||
+                    parseInt(apt.service?.duration) ||
+                    30;
+
+                aptEnd = aptStart + aptDuration;
+            }
+
+            // overlap check
+            const overlaps =
+                slotStart < aptEnd &&
+                slotEnd > aptStart;
+
+            if (overlaps) {
+
+                blocked = true;
+
+                addDebugLog(
+                    `❌ BLOCKED ${slotStart}-${slotEnd} overlaps ${apt.startTime}`
+                );
+
+                break;
+            }
+        }
+
+        // free slot
+        if (!blocked) {
+
+            const startHour = Math.floor(slotStart / 60);
+            const startMin = slotStart % 60;
+
+            const endHour = Math.floor(slotEnd / 60);
+            const endMin = slotEnd % 60;
+
+            const startTime =
+                `${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}`;
+
+            const endTime =
+                `${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`;
+
+            slots.push({
+                startTime,
+                endTime
+            });
+
+            addDebugLog(`✅ AVAILABLE ${startTime}`);
+        }
+    }
+
+    addDebugLog(`🎯 Total available slots: ${slots.length}`);
+
+    return slots;
+}
+
+
+    function getDaysInMonth(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const days = [];
+        let startDay = firstDay.getDay();
+        for(let i = 0; i < startDay; i++) days.push(null);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for(let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+        return days;
+    }
+
+    function selectService(service) {
+        addDebugLog(`✂️ Selected: ${service.name} (${service.duration}min)`);
+        state.selectedService = service;
+        state.selectedDate = null;
+        state.selectedTime = null;
+        render();
+    }
+
+    function selectCategory(categoryId) {
+        state.selectedCategoryId = categoryId;
+        state.selectedService = null;
+        state.selectedDate = null;
+        state.selectedTime = null;
+        render();
+    }
+
+    function selectDate(date) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        if (date < today) {
+            addDebugLog(`⚠️ Cannot select past date: ${date}`);
+            return;
+        }
+        addDebugLog(`📅 Selected date: ${date.toLocaleDateString('he-IL')}`);
+        state.selectedDate = date;
+        state.selectedTime = null;
+        render();
+    }
+
+    function selectTime(slot) {
+        addDebugLog(`⏰ Selected time: ${slot.startTime}`);
+        state.selectedTime = slot;
+        render();
+    }
+
+    // פונקציה כללית לשליחת מייל
+    async function sendEmail(action, appointment) {
+        // יוצרים FormData עם action והאובייקט
+        const formData = new FormData();
+        formData.append('action', action);
+        formData.append('data', JSON.stringify(appointment));
+    
+        return fetch('send-email.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.error('Email error:', data.message);
+            }
+            return data;
+        })
+        .catch(err => console.error('Fetch error:', err));
+    }
+    
+    async function bookAppointment() {
+        if (!state.selectedService || !state.selectedDate || !state.selectedTime || 
+            !state.customerInfo.name || !state.customerInfo.phone) {
+            alert('נא למלא את כל השדות');
+            return;
+        }
+        
+        // Verify still available
+        const slots = getAvailableSlots(state.selectedDate, state.selectedService.duration);
+        if (!slots.some(s => s.startTime === state.selectedTime.startTime)) {
+            alert('התור כבר לא זמין');
+            state.selectedTime = null;
+            render();
+            return;
+        }
+        
+        const totalPrice = parseFloat(state.selectedService.price) + parseFloat(state.selectedService.materials_fee || 0);
+        
+        const appointment = {
+            service: {
+                id: state.selectedService.id,
+                name: state.selectedService.name,
+                duration: state.selectedService.duration,
+                price: totalPrice
+            },
+            date:
+            `${state.selectedDate.getFullYear()}-${
+            String(state.selectedDate.getMonth()+1).padStart(2,'0')
+            }-${
+            String(state.selectedDate.getDate()).padStart(2,'0')
+            }`,
+            startTime: state.selectedTime.startTime,
+            endTime: state.selectedTime.endTime,
+            customer: {...state.customerInfo}
+        };
+        
+        const result = await bookAppointmentInDB(appointment);
+        
+        if (result.success) {
+            addDebugLog(`✅ Booked: ${appointment.startTime} on ${appointment.date}`);
+            await fetchAppointments();
+            
+             await sendEmail('booking_confirmation', appointment);
+             
+            state.view = 'success';
+            render();
+            setTimeout(() => {
+                state.view = 'client';
+                state.selectedService = null;
+                state.selectedDate = null;
+                state.selectedTime = null;
+                state.customerInfo = {name: '', phone: '', email: ''};
+                render();
+            }, 3000);
+        } else {
+            alert('שגיאה: ' + result.message);
+            await fetchAppointments();
+            render();
+        }
+    }
+
+    function changeMonth(direction) {
+        state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() + direction);
+        render();
+    }
+
+    function formatPrice(service) {
+        const total = parseFloat(service.price) + parseFloat(service.materials_fee || 0);
+        return `₪${total}`;
+    }
+
+    function render() {
+        const app = document.getElementById('app');
+        if (!app) return;
+        
+        if (state.isLoading) {
+            app.innerHTML = `<div class="container"><div class="card" style="text-align:center"><div class="loading-spinner"></div><h3>טוען...</h3></div></div>`;
+            return;
+        }
+        
+        if (state.error) {
+            app.innerHTML = `<div class="container"><div class="card"><h2>שגיאה</h2><p>${state.error}</p><button class="btn btn-primary" onclick="location.reload()">נסה שוב</button></div></div>`;
+            return;
+        }
+        
+        if (state.view === 'success') {
+            app.innerHTML = `<div class="container"><div class="card success"><div class="success-icon">✓</div><h2>התור נקבע בהצלחה!</h2><p>${state.selectedService.name}</p><p>${state.selectedDate.toLocaleDateString('he-IL')} ב-${state.selectedTime.startTime}</p><button class="btn btn-primary" onclick="location.reload()">לתור חדש</button></div></div>`;
+            return;
+        }
+
+        const days = getDaysInMonth(state.currentMonth);
+        const displayedServices = state.selectedCategoryId ? state.services.filter(s => s.category_id == state.selectedCategoryId) : state.services;
+        const slots = (state.selectedDate && state.selectedService) ? 
+            getAvailableSlots(state.selectedDate, state.selectedService.duration) : [];
+        const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+
+        app.innerHTML = `
+            <div class="container">
+                <div class="header">
+                    <h1>${state.settings.businessName}</h1>
+                    <p>מערכת זימון תורים</p>
+                </div>
+                
+                <div class="card">
+                    <h2>${state.selectedService ? 'בחר תאריך' : 'בחר שירות'}</h2>
+                    
+                    ${!state.selectedService ? `
+                        ${state.categories.length > 0 ? `
+                            <div class="chips-wrapper">
+                                <span class="chip${state.selectedCategoryId === null ? ' active' : ''}" onclick="selectCategory(null)">הכל</span>
+                                ${state.categories.map(cat => `<span class="chip${state.selectedCategoryId === cat.id ? ' active' : ''}" onclick="selectCategory(${cat.id})">${cat.name}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="grid grid-3">
+                            ${displayedServices.map(s => `
+                                <div class="service-card" onclick="selectService(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+                                    ${(s.popular || s.featured) ? `<div class="badge-container">${s.popular ? '<div class="badge popular">פופולרי</div>' : ''}${s.featured ? '<div class="badge featured">מומלץ</div>' : ''}</div>` : ''}
+                                    <div class="service-name">${s.name}</div>
+                                    <div class="service-desc">${(s.short_description || s.description || '').substring(0, 60)}</div>
+                                    <div class="service-info">
+                                        <span class="price">${formatPrice(s)}</span>
+                                        <span class="duration">${s.duration} דקות</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div class="cal-nav">
+                            <button class="btn btn-primary" onclick="changeMonth(-1)">→</button>
+                            <h3>${months[state.currentMonth.getMonth()]} ${state.currentMonth.getFullYear()}</h3>
+                            <button class="btn btn-primary" onclick="changeMonth(1)">←</button>
+                        </div>
+                        <div class="calendar">
+                            ${['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map(d => `<div class="cal-header">${d}</div>`).join('')}
+                            ${days.map(day => {
+                                if (!day) return '<div class="cal-day empty"></div>';
+                                const today = new Date();
+                                today.setHours(0,0,0,0);
+                                const isPast = day < today;
+                                const isSelected = state.selectedDate && day.toDateString() === state.selectedDate.toDateString();
+                                return `<div class="cal-day ${isPast ? 'past' : ''} ${isSelected ? 'selected' : ''}" onclick="selectDate(new Date(${day.getTime()}))">${day.getDate()}</div>`;
+                            }).join('')}
+                        </div>
+                        <button 
+                            class="btn btn-secondary" 
+                            style="margin-top:15px"
+                            onclick="
+                                state.selectedService = null;
+                                state.selectedDate = null;
+                                state.selectedTime = null;
+                                render();
+                            "
+                        >
+                        ← חזרה
+                        </button>
+                    `}
+                </div>
+
+                ${state.selectedDate && state.selectedService && slots.length > 0 ? `
+                    <div class="card">
+                        <h2>שעות פנויות ל-${state.selectedDate.toLocaleDateString('he-IL')}</h2>
+                        <div class="time-slots">
+                            ${slots.map(slot => `
+                                <div class="time-slot ${state.selectedTime?.startTime === slot.startTime ? 'selected' : ''}" 
+                                     onclick="selectTime(${JSON.stringify(slot).replace(/"/g, '&quot;')})">
+                                    ${slot.startTime}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${state.selectedDate && state.selectedService && slots.length === 0 ? `
+                    <div class="card">
+                        <div class="no-slots">אין שעות פנויות ביום זה</div>
+                    </div>
+                ` : ''}
+
+                ${state.selectedTime && state.selectedService ? `
+                    <div class="card">
+                        <h2>פרטים</h2>
+                        <input type="text" placeholder="שם מלא *" value="${(state.customerInfo.name || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.name=this.value">
+                        <input type="tel" placeholder="טלפון *" value="${(state.customerInfo.phone || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.phone=this.value">
+                        <input type="email" placeholder="אימייל" value="${(state.customerInfo.email || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.email=this.value">
+                        <button class="btn btn-primary" style="width:100%" onclick="bookAppointment()">אישור</button>
+                        <div class="summary">
+                            <h3>סיכום:</h3>
+                            <p>${state.selectedService?.name || ''}</p>
+                            <p>${state.selectedDate.toLocaleDateString('he-IL')} ${state.selectedTime.startTime}</p>
+                            <p>${state.selectedService.duration} דקות</p>
+                            <p><strong>${formatPrice(state.selectedService)}</strong></p>
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <!-- <div id="debug-panel" class="debug-panel"></div> -->
+            </div>
+        `;
+        // updateDebugPanel();
+        // Tell parent page the required height
+        setTimeout(() => {
+            const h = document.getElementById('app').scrollHeight;
+            window.parent.postMessage({ type: 'bookingHeight', height: h + 40 }, '*');
+        }, 100);
+    }
+
+    async function initialize() {
+        state.isLoading = true;
+        render();
+        await fetchServicesFromDB();
+        await fetchAppointments();
+        state.isLoading = false;
+        render();
+    }
+    
+    initialize();
+</script>
+</body>
+</html>
