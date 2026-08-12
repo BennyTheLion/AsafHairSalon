@@ -115,11 +115,11 @@
 		<ul class="nav-menu" id="navMenu">
                 <li><a href="#hero">ראשי</a></li>
                 <li><a href="#about">אודות</a></li>
-                <li><a href="#gallery">גלריה</a></li>
+                <li><a href="#gallery-section">גלריה</a></li>
                 <li><a href="#before-after">לפני / אחרי</a></li>
                 <li><a href="#services">שירותים</a></li>
                 <li><a href="#testimonials">המלצות</a></li>
-                <li><a href="#cta-form">קביעת תור</a></li>
+                <li><a href="#BookAppointment">קביעת תור</a></li>
             </ul>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -1028,12 +1028,24 @@
 
     <!-- Auto-resize booking iframe -->
     <script>
+    var lastBookingHeight = 0;
+    var bookingUserActive = false;
+    var bookingFrame2 = document.getElementById('bookingFrame');
+    if (bookingFrame2) {
+        bookingFrame2.addEventListener('mouseenter', function(){ bookingUserActive = true; });
+        bookingFrame2.addEventListener('touchstart', function(){ bookingUserActive = true; });
+        bookingFrame2.addEventListener('click', function(){ bookingUserActive = true; });
+    }
     window.addEventListener('message', function(e) {
         if (e.data && e.data.type === 'bookingHeight') {
             var frame = document.getElementById('bookingFrame');
             if (frame) {
                 frame.style.height = e.data.height + 'px';
-                frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Scroll only when user actively interacts (not on initial load)
+                if (bookingUserActive && e.data.height !== lastBookingHeight) {
+                    frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                lastBookingHeight = e.data.height;
             }
         }
     });
