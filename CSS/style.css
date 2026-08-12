@@ -1491,14 +1491,19 @@
             }
 			
 			.gallery-container {
-                width: 100%;       /* Use full screen width */
-                padding: 0 5px;    /* Reduce side padding */
-                margin: 0 auto;    /* Keep it centered */
+                width: 100%;
+                padding: 0;
+                margin: 0 auto;
+                border-radius: 0;
             }
             
             .gallery-track img {
-                width: 200px;
-                height: 120px;
+                width: 85vw;
+                height: 56vw;
+                max-height: 300px;
+                object-fit: cover;
+                margin-right: 8px;
+                border-radius: 8px;
             }
         }
 
