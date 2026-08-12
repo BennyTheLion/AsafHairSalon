@@ -104,17 +104,20 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f4f4;}
 .sidebar h3{padding:0 15px 15px;color:#c8a97e;font-size:16px;border-bottom:1px solid #444;margin-bottom:8px;}
 .sidebar a{display:block;padding:12px 15px;color:#bbb;text-decoration:none;font-size:14px;border-right:3px solid transparent;transition:.2s;}
 .sidebar a:hover,.sidebar a.active{color:#fff;background:#3a3a3a;border-right-color:#c8a97e;}
-/* Top nav — mobile only */
-.topnav{display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:#2c2c2c;white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.topnav a{display:inline-block;padding:14px 16px;color:#bbb;text-decoration:none;font-size:14px;border-bottom:3px solid transparent;}
-.topnav a.active{color:#fff;border-bottom-color:#c8a97e;}
-.topnav .logout{color:#e74c3c;}
+/* Hamburger + mobile menu */
+.hamburger{display:none;position:fixed;top:12px;right:12px;z-index:300;background:#c8a97e;color:#fff;border:none;width:42px;height:42px;border-radius:8px;font-size:22px;cursor:pointer;}
+.mobile-menu{display:none;position:fixed;top:60px;right:10px;left:10px;z-index:250;background:#2c2c2c;border-radius:10px;padding:8px 0;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+.mobile-menu a{display:block;padding:14px 18px;color:#bbb;text-decoration:none;font-size:15px;border-right:3px solid transparent;}
+.mobile-menu a.active{color:#fff;background:#3a3a3a;border-right-color:#c8a97e;}
+.mobile-menu .logout{color:#e74c3c;}
+.mobile-menu.open{display:block;}
 .main{margin-right:210px;padding:20px;max-width:calc(100% - 210px);}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;background:#fff;padding:12px 15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.05);font-size:14px;}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:15px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:15px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow-x:auto;}
 .card h2{color:#444;margin-bottom:12px;font-size:18px;}
-table{width:100%;border-collapse:collapse;margin-top:8px;}
-th,td{border:1px solid #ddd;padding:7px;font-size:13px;}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+table{width:100%;border-collapse:collapse;margin-top:8px;min-width:480px;}
+th,td{border:1px solid #ddd;padding:7px;font-size:13px;white-space:nowrap;}
 th{background:#c8a97e;color:#fff;}
 td[contenteditable="true"]{background:#fefbd8;}
 input,select,textarea{padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin:3px 0;width:100%;}
@@ -127,20 +130,24 @@ button:hover,.btn:hover{background:#8b7355;}
 .appt-cal th{background:#c8a97e;color:#fff;padding:6px;text-align:center;font-size:12px;}
 .appt-cal td{vertical-align:top;height:65px;padding:3px;border:1px solid #ddd;font-size:10px;}
 .appt-cal .today{background:#fef9f0;}.appt-cal .empty{background:#f9f9f9;}
-/* Mobile: hide sidebar, show top nav */
+/* Mobile */
 @media(max-width:768px){
  .sidebar{display:none;}
- .topnav{display:block;}
- .main{margin-right:0;max-width:100%;padding:60px 10px 10px;}
+ .hamburger{display:block;}
+ .main{margin-right:0;max-width:100%;padding:70px 10px 10px;}
  .topbar{flex-direction:column;gap:5px;}
- table{font-size:11px;}th,td{padding:4px;}
+ .card{padding:12px;}
+ table{min-width:520px;}
+ th,td{padding:5px;}
 }
-</style>
 </head>
 <body>
 
-<!-- Top nav — mobile -->
-<div class="topnav">
+<!-- Hamburger — mobile -->
+<button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">☰</button>
+
+<!-- Mobile dropdown menu -->
+<div class="mobile-menu">
     <a href="?page=dashboard" class="<?=$page=='dashboard'?'active':''?>">🏠 לוח בקרה</a>
     <a href="?page=appointments" class="<?=$page=='appointments'?'active':''?>">📅 יומן תורים</a>
     <a href="?page=categories" class="<?=$page=='categories'?'active':''?>">📂 קטגוריות</a>
