@@ -23,7 +23,13 @@ define('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
 
 function getDbConnection() {
     global $conn;
-    if (isset($conn) && is_object($conn) && $conn->ping()) return $conn;
+    if (isset($conn) && is_object($conn)) {
+        try {
+            if ($conn->ping()) return $conn;
+        } catch (Throwable $e) {
+            // Stale/closed handle — fall through and reconnect.
+        }
+    }
     try {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     } catch (mysqli_sql_exception $e) {
@@ -36,30 +42,66 @@ function getDbConnection() {
 }
 
 function closeDbConnection() {
-    global $conn;
-    if (isset($conn)) { $conn->close(); unset($conn); }
+    if (isset($GLOBALS['conn']) && is_object($GLOBALS['conn'])) {
+        try { $GLOBALS['conn']->close(); } catch (Throwable $e) {}
+        unset($GLOBALS['conn']);
+    }
 }
 
+// Creates the admin_logs table if it does not exist yet (self-healing).
+// Runs at most once per request; never throws.
+function ensureAdminLogsTable($conn) {
+    static $attempted = false;
+    if ($attempted) return true;
+    $attempted = true;
+    try {
+        $conn->query("CREATE TABLE IF NOT EXISTS admin_logs (
+            id INT(11) NOT NULL AUTO_INCREMENT,
+            user_id INT(11) DEFAULT NULL,
+            username VARCHAR(100) DEFAULT NULL,
+            action VARCHAR(255) DEFAULT NULL,
+            details TEXT DEFAULT NULL,
+            ip VARCHAR(45) DEFAULT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+            PRIMARY KEY (id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        return true;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+// Logging must never break the main flow (booking, forms, admin actions).
 function logAction($action, $details = '') {
     if (!isset($_SESSION['user_id'])) return;
     $conn = getDbConnection();
     if (!$conn) return;
-    $uid = intval($_SESSION['user_id']);
-    $user = $conn->real_escape_string($_SESSION['full_name'] ?? 'Unknown');
-    $act = $conn->real_escape_string($action);
-    $det = $conn->real_escape_string($details);
-    $ip = $conn->real_escape_string($_SERVER['REMOTE_ADDR'] ?? '');
-    $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES ($uid, '$user', '$act', '$det', '$ip')");
+    try {
+        ensureAdminLogsTable($conn);
+        $uid = intval($_SESSION['user_id']);
+        $user = $conn->real_escape_string($_SESSION['full_name'] ?? 'Unknown');
+        $act = $conn->real_escape_string($action);
+        $det = $conn->real_escape_string($details);
+        $ip = $conn->real_escape_string($_SERVER['REMOTE_ADDR'] ?? '');
+        $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES ($uid, '$user', '$act', '$det', '$ip')");
+    } catch (Throwable $e) {
+        error_log("admin_logs write failed: " . $e->getMessage());
+    }
     closeDbConnection();
 }
 
 function clientLog($action, $details = '') {
     $conn = getDbConnection();
     if (!$conn) return;
-    $act = $conn->real_escape_string($action);
-    $det = $conn->real_escape_string($details);
-    $ip = $conn->real_escape_string($_SERVER['REMOTE_ADDR'] ?? '');
-    $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES (0, 'Client', '$act', '$det', '$ip')");
+    try {
+        ensureAdminLogsTable($conn);
+        $act = $conn->real_escape_string($action);
+        $det = $conn->real_escape_string($details);
+        $ip = $conn->real_escape_string($_SERVER['REMOTE_ADDR'] ?? '');
+        $conn->query("INSERT INTO admin_logs (user_id, username, action, details, ip) VALUES (0, 'Client', '$act', '$det', '$ip')");
+    } catch (Throwable $e) {
+        error_log("admin_logs write failed: " . $e->getMessage());
+    }
     closeDbConnection();
 }
 ?>

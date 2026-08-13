@@ -94,12 +94,17 @@ try {
         throw new Exception("Insert failed: " . $conn->error);
     }
 
+    $appointmentId = $conn->insert_id;
+
+    // Logging is best-effort: clientLog() never throws (config.php catches
+    // failures and creates the admin_logs table if missing), so a log problem
+    // can never turn a successful booking into an error response.
     clientLog('Booked appointment', $customer['name'] . ' - ' . $service['name'] . ' on ' . $date . ' at ' . $startTime);
 
     echo json_encode([
         "success" => true,
         "message" => "Appointment booked successfully",
-        "appointment_id" => $conn->insert_id,
+        "appointment_id" => $appointmentId,
         "end_time" => $endTime
     ]);
 
