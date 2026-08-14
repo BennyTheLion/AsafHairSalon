@@ -121,7 +121,7 @@ try {
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
     
-    $mail->setFrom(SMTP_USERNAME, 'מספרת אסף בן נעים');
+    $mail->setFrom(SMTP_FROM_EMAIL, 'מספרת אסף בן נעים');
     $mail->addAddress(defined('OWNER_EMAIL') ? OWNER_EMAIL : 'noreply@landingflow.co.il');
     $mail->isHTML(true);
     $mail->Subject = "פנייה חדשה מאתר של אסף בן נעים - {$name}";
@@ -140,7 +140,7 @@ try {
     $auto->CharSet = 'UTF-8';
     $auto->Encoding = 'base64';
     
-    $auto->setFrom(SMTP_USERNAME, 'מספרה אסף בן נעים');
+    $auto->setFrom(SMTP_FROM_EMAIL, 'מספרה אסף בן נעים');
     $auto->addAddress($email);
     $auto->isHTML(true);
     $auto->Subject = "תודה על פנייתך למספרה של אסף";

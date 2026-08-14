@@ -13,10 +13,10 @@ define('APP_URL', 'https://steelblue-seahorse-742958.hostingersite.com/');
 
 define('SMTP_HOST', 'smtp.hostinger.com');
 define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'refael-401@nadlanisteam.co.il');
+if (!defined('SMTP_USERNAME')) define('SMTP_USERNAME', 'noreply@landingflow.co.il');
 if (!defined('SMTP_PASSWORD')) define('SMTP_PASSWORD', '');
 define('SMTP_ENCRYPTION', 'tls');
-define('SMTP_FROM_EMAIL', 'no-reply@yourdomain.com');
+if (!defined('SMTP_FROM_EMAIL')) define('SMTP_FROM_EMAIL', 'noreply@landingflow.co.il');
 define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 
 // Owner inbox — receives booking/cancel/reschedule/lead notifications.

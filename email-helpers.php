@@ -18,9 +18,10 @@ if (!defined('APP_URL') && file_exists(__DIR__ . '/config.php')) {
 if (!defined('APP_URL')) define('APP_URL', 'https://steelblue-seahorse-742958.hostingersite.com/');
 if (!defined('SMTP_HOST')) define('SMTP_HOST', 'smtp.hostinger.com');
 if (!defined('SMTP_PORT')) define('SMTP_PORT', 587);
-if (!defined('SMTP_USERNAME')) define('SMTP_USERNAME', 'refael-401@nadlanisteam.co.il');
+if (!defined('SMTP_USERNAME')) define('SMTP_USERNAME', 'noreply@landingflow.co.il');
 if (!defined('SMTP_PASSWORD')) define('SMTP_PASSWORD', '');
 if (!defined('SMTP_ENCRYPTION')) define('SMTP_ENCRYPTION', 'tls');
+if (!defined('SMTP_FROM_EMAIL')) define('SMTP_FROM_EMAIL', 'noreply@landingflow.co.il');
 if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 
 function getOwnerEmail() {
@@ -68,7 +69,7 @@ function sendMail($to, $subject, $body) {
         $mail->Port       = SMTP_PORT;
         $mail->CharSet    = 'UTF-8';
         $mail->Encoding   = 'base64';
-        $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
+        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
         $mail->addAddress($to);
         $mail->isHTML(true);
         $mail->Subject = $subject;
