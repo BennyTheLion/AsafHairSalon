@@ -24,8 +24,7 @@ if (!defined('SMTP_ENCRYPTION')) define('SMTP_ENCRYPTION', 'tls');
 if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 
 function getOwnerEmail() {
-    global $OWNER_EMAIL;
-    return $OWNER_EMAIL ?? 'maimonov@gmail.com';
+    return defined('OWNER_EMAIL') && OWNER_EMAIL !== '' ? OWNER_EMAIL : 'noreply@landingflow.co.il';
 }
 
 // RTL Hebrew email template wrapper

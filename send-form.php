@@ -122,7 +122,7 @@ try {
     $mail->Encoding = 'base64';
     
     $mail->setFrom(SMTP_USERNAME, 'מספרת אסף בן נעים');
-    $mail->addAddress('maimonov@gmail.com');
+    $mail->addAddress(defined('OWNER_EMAIL') ? OWNER_EMAIL : 'noreply@landingflow.co.il');
     $mail->isHTML(true);
     $mail->Subject = "פנייה חדשה מאתר של אסף בן נעים - {$name}";
     $mail->Body    = $email_body;

@@ -19,6 +19,10 @@ define('SMTP_ENCRYPTION', 'tls');
 define('SMTP_FROM_EMAIL', 'no-reply@yourdomain.com');
 define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 
+// Owner inbox — receives booking/cancel/reschedule/lead notifications.
+// Not a secret; can be overridden in config.local.php if needed.
+if (!defined('OWNER_EMAIL')) define('OWNER_EMAIL', 'noreply@landingflow.co.il');
+
 // Database configuration for Hostinger
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u880968607_AsafHairSalon');
