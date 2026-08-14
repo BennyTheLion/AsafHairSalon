@@ -112,16 +112,16 @@ try {
     // ---------- Lead email ----------
     $mail = new PHPMailer(true);
     $mail->isSMTP();
-    $mail->Host       = 'smtp.hostinger.com';
+    $mail->Host       = SMTP_HOST;
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'refael-401@nadlanisteam.co.il';
-    $mail->Password   = 'REVOKED_SMTP_PASSWORD';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
+    $mail->Username   = SMTP_USERNAME;
+    $mail->Password   = SMTP_PASSWORD;
+    $mail->SMTPSecure = SMTP_ENCRYPTION === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = SMTP_PORT;
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
     
-    $mail->setFrom('refael-401@nadlanisteam.co.il', 'מספרת אסף בן נעים');
+    $mail->setFrom(SMTP_USERNAME, 'מספרת אסף בן נעים');
     $mail->addAddress('maimonov@gmail.com');
     $mail->isHTML(true);
     $mail->Subject = "פנייה חדשה מאתר של אסף בן נעים - {$name}";
@@ -131,16 +131,16 @@ try {
     // ---------- Auto-reply to user ----------
     $auto = new PHPMailer(true);
     $auto->isSMTP();
-    $auto->Host       = 'smtp.hostinger.com';
+    $auto->Host       = SMTP_HOST;
     $auto->SMTPAuth   = true;
-    $auto->Username   = 'refael-401@nadlanisteam.co.il';
-    $auto->Password   = 'REVOKED_SMTP_PASSWORD';
-    $auto->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $auto->Port       = 587;
+    $auto->Username   = SMTP_USERNAME;
+    $auto->Password   = SMTP_PASSWORD;
+    $auto->SMTPSecure = SMTP_ENCRYPTION === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+    $auto->Port       = SMTP_PORT;
     $auto->CharSet = 'UTF-8';
     $auto->Encoding = 'base64';
     
-    $auto->setFrom('refael-401@nadlanisteam.co.il', 'מספרה אסף בן נעים');
+    $auto->setFrom(SMTP_USERNAME, 'מספרה אסף בן נעים');
     $auto->addAddress($email);
     $auto->isHTML(true);
     $auto->Subject = "תודה על פנייתך למספרה של אסף";

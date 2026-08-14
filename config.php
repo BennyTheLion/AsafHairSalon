@@ -1,11 +1,20 @@
 <?php
 
+// ============================================================
+// Local secrets override — loaded FIRST so it can supply any
+// secret below. This file is gitignored and never committed.
+// On Hostinger, create config.local.php manually.
+// ============================================================
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+}
+
 define('APP_URL', 'https://steelblue-seahorse-742958.hostingersite.com/');
 
 define('SMTP_HOST', 'smtp.hostinger.com');
 define('SMTP_PORT', 587);
 define('SMTP_USERNAME', 'refael-401@nadlanisteam.co.il');
-define('SMTP_PASSWORD', 'REVOKED_SMTP_PASSWORD');
+if (!defined('SMTP_PASSWORD')) define('SMTP_PASSWORD', '');
 define('SMTP_ENCRYPTION', 'tls');
 define('SMTP_FROM_EMAIL', 'no-reply@yourdomain.com');
 define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
@@ -14,18 +23,12 @@ define('SMTP_FROM_NAME', 'מספרת אסף בן-נעים');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u880968607_AsafHairSalon');
 define('DB_USER', 'u880968607_Asaf');
-define('DB_PASS', 'REVOKED_DB_PASSWORD');
+if (!defined('DB_PASS')) define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 // Google reCAPTCHA v2 keys
 define('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
 define('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
-
-// Optional local secrets override — never committed to git (see .gitignore).
-// Define TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID in config.local.php.
-if (file_exists(__DIR__ . '/config.local.php')) {
-    require_once __DIR__ . '/config.local.php';
-}
 
 function getDbConnection() {
     global $conn;
