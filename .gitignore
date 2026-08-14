@@ -10,3 +10,6 @@ Thumbs.db
 debug.php
 test.php
 HashPassword.php
+
+# Local secrets (Telegram token etc.) — never commit
+config.local.php

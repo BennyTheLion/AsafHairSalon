@@ -84,8 +84,12 @@ function sendMail($to, $subject, $body) {
 
 // Send a Telegram notification (e.g., when emails fail or bookings happen)
 function notifyTelegram($text) {
-    $botToken = "REVOKED_TELEGRAM_BOT_TOKEN";
-    $chatId   = "2116909126";
+    if (!defined('TELEGRAM_BOT_TOKEN') || !defined('TELEGRAM_CHAT_ID')) {
+        error_log('Telegram notify skipped: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not defined');
+        return false;
+    }
+    $botToken = TELEGRAM_BOT_TOKEN;
+    $chatId   = TELEGRAM_CHAT_ID;
     $url  = "https://api.telegram.org/bot$botToken/sendMessage";
     $data = ['chat_id' => $chatId, 'text' => mb_substr($text, 0, 4000)];
     $options = [

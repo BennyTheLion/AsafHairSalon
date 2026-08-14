@@ -187,8 +187,11 @@ if (($fp = fopen($csvFile, 'a')) !== false) {
 
 // ================== SEND TELEGRAM MESSAGE ==================
 try {
-    $botToken = "REVOKED_TELEGRAM_BOT_TOKEN";
-    $chatId = "2116909126";
+    if (!defined('TELEGRAM_BOT_TOKEN') || !defined('TELEGRAM_CHAT_ID')) {
+        error_log('Telegram notify skipped: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not defined');
+    } else {
+    $botToken = TELEGRAM_BOT_TOKEN;
+    $chatId = TELEGRAM_CHAT_ID;
     $messageText = "🆕 New lead!\nName: {$name}\nPhone: {$phone}\nEmail: {$email}\nService: {$service_info}";
 
     $url = "https://api.telegram.org/bot$botToken/sendMessage";
@@ -207,6 +210,7 @@ try {
     if ($result === FALSE) {
         $response['message'] .= "\n⚠️ Failed to send Telegram notification";
     }
+    } // end TELEGRAM_BOT_TOKEN check
 
 } catch (Exception $e) {
     $response['message'] .= "\n⚠️ Telegram Error: " . $e->getMessage();

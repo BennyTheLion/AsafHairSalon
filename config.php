@@ -21,6 +21,12 @@ define('DB_CHARSET', 'utf8mb4');
 define('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
 define('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
 
+// Optional local secrets override — never committed to git (see .gitignore).
+// Define TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID in config.local.php.
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+}
+
 function getDbConnection() {
     global $conn;
     if (isset($conn) && is_object($conn)) {
