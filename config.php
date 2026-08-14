@@ -101,6 +101,26 @@ function ensureAppointmentCancelToken($conn) {
     }
 }
 
+// Makes slot_key include the status (self-healing). Without this, a cancelled
+// appointment keeps its slot_key and the unique index blocks re-booking that
+// start time forever even though the slot is shown as free. Never throws.
+function ensureAppointmentSlotKey($conn) {
+    static $attempted = false;
+    if ($attempted) return true;
+    $attempted = true;
+    try {
+        $r = $conn->query("SHOW CREATE TABLE appointments");
+        $row = $r ? $r->fetch_assoc() : null;
+        $ddl = isset($row['Create Table']) ? $row['Create Table'] : '';
+        if ($ddl !== '' && strpos($ddl, "concat(`appointment_date`,'_',`start_time`,'_',`status`)") === false) {
+            $conn->query("ALTER TABLE appointments MODIFY COLUMN slot_key VARCHAR(64) GENERATED ALWAYS AS (concat(`appointment_date`,'_',`start_time`,'_',`status`)) STORED");
+        }
+        return true;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
 // Logging must never break the main flow (booking, forms, admin actions).
 function logAction($action, $details = '') {
     if (!isset($_SESSION['user_id'])) return;

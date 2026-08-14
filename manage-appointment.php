@@ -89,22 +89,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $appt) {
                 } else {
                     $stmt = $conn->prepare("UPDATE appointments SET appointment_date = ?, start_time = ?, end_time = ? WHERE id = ? AND cancel_token = ?");
                     $stmt->bind_param("sssis", $newDate, $newStart, $newEnd, $id, $token);
-                    $stmt->execute();
-                    clientLog('Customer rescheduled appointment', $appt['customer_name'] . ' -> ' . $newDate . ' ' . $newStart);
-                    $msg = 'התור שונה בהצלחה ל-' . $newDate . ' בשעה ' . substr($newStart, 0, 5) . '.';
-                    $msgType = 'success';
+                    if ($stmt->execute()) {
+                        clientLog('Customer rescheduled appointment', $appt['customer_name'] . ' -> ' . $newDate . ' ' . $newStart);
+                        $msg = 'התור שונה בהצלחה ל-' . $newDate . ' בשעה ' . substr($newStart, 0, 5) . '.';
+                        $msgType = 'success';
 
-                    $emailData = [
-                        'customer' => ['name' => $appt['customer_name'], 'phone' => $appt['customer_phone'], 'email' => $appt['customer_email']],
-                        'service'  => ['name' => $appt['service_name'], 'duration' => $appt['service_duration'], 'price' => $appt['service_price']],
-                        'date' => $newDate, 'startTime' => substr($newStart, 0, 5), 'endTime' => substr($newEnd, 0, 5),
-                        'appointmentId' => $appt['id'], 'cancelToken' => $appt['cancel_token']
-                    ];
-                    sendAppointmentEmails('reschedule', $emailData); // best-effort
+                        $emailData = [
+                            'customer' => ['name' => $appt['customer_name'], 'phone' => $appt['customer_phone'], 'email' => $appt['customer_email']],
+                            'service'  => ['name' => $appt['service_name'], 'duration' => $appt['service_duration'], 'price' => $appt['service_price']],
+                            'date' => $newDate, 'startTime' => substr($newStart, 0, 5), 'endTime' => substr($newEnd, 0, 5),
+                            'appointmentId' => $appt['id'], 'cancelToken' => $appt['cancel_token']
+                        ];
+                        sendAppointmentEmails('reschedule', $emailData); // best-effort
 
-                    // clientLog() closes the shared connection — refresh with a new one.
-                    $conn = getDbConnection();
-                    $appt = loadAppointment($conn, $id, $token); // refresh
+                        // clientLog() closes the shared connection — refresh with a new one.
+                        $conn = getDbConnection();
+                        $appt = loadAppointment($conn, $id, $token); // refresh
+                    } else {
+                        // 1062 = duplicate slot_key (race) — show as taken
+                        $msg = ($conn->errno === 1062)
+                            ? 'השעה המבוקשת כבר תפוסה. נסו שעה אחרת.'
+                            : 'לא ניתן היה לשנות את התור. נסו שוב.';
+                        $msgType = 'error';
+                    }
                 }
             }
         }

@@ -44,7 +44,7 @@ CREATE TABLE `appointments` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `slot_key` varchar(32) GENERATED ALWAYS AS (concat(`appointment_date`,'_',`start_time`)) STORED
+  `slot_key` varchar(64) GENERATED ALWAYS AS (concat(`appointment_date`,'_',`start_time`,'_',`status`)) STORED
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

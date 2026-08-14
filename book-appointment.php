@@ -70,6 +70,7 @@ try {
     // =========================
     $cancelToken = bin2hex(random_bytes(16)); // for customer cancel/reschedule links
     ensureAppointmentCancelToken($conn);      // self-healing column (never throws)
+    ensureAppointmentSlotKey($conn);          // slot_key includes status (never throws)
 
     $insert = $conn->prepare("
         INSERT INTO appointments 
@@ -95,6 +96,11 @@ try {
     );
 
     if (!$insert->execute()) {
+        // Duplicate slot_key: only happens if two bookings race for the same
+        // start time — report it as taken, not as a raw SQL error.
+        if ($conn->errno === 1062) {
+            throw new Exception("This time slot is already booked");
+        }
         throw new Exception("Insert failed: " . $conn->error);
     }
 
