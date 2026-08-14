@@ -177,6 +177,7 @@
             businessName: 'אסף - מספרה וסטיילינג'
         },
         isLoading: true,
+        isBooking: false,
         error: null
     };
 
@@ -444,17 +445,26 @@ function getAvailableSlots(date, duration) {
     }
     
     async function bookAppointment() {
+        if (state.isBooking) return; // prevent double submission
         if (!state.selectedService || !state.selectedDate || !state.selectedTime || 
             !state.customerInfo.name || !state.customerInfo.phone || !state.customerInfo.email) {
             showBanner('❌ נא למלא את כל השדות כולל אימייל (לקבלת אישור התור)', 'error');
             return;
         }
         
+        state.isBooking = true;
+        render();
+        
+        // Refresh availability from the server right before booking so the
+        // check matches the database exactly (avoids stale "pickable" slots).
+        await fetchAppointments();
+        
         // Verify still available
         const slots = getAvailableSlots(state.selectedDate, state.selectedService.duration);
         if (!slots.some(s => s.startTime === state.selectedTime.startTime)) {
-            showBanner('❌ התור כבר לא זמין', 'error');
+            showBanner('❌ התור כבר נתפס על ידי לקוח אחר. נא לבחור שעה אחרת', 'error');
             state.selectedTime = null;
+            state.isBooking = false;
             render();
             return;
         }
@@ -493,6 +503,7 @@ function getAvailableSlots(date, duration) {
             await sendEmail('booking_confirmation', appointment);
              
             state.view = 'success';
+            state.isBooking = false;
             render();
             setTimeout(() => {
                 state.view = 'client';
@@ -503,7 +514,13 @@ function getAvailableSlots(date, duration) {
                 render();
             }, 3000);
         } else {
-            showBanner('❌ ' + result.message, 'error');
+            // Translate the server's overlap message; clear the taken slot.
+            const msg = (result.message || '').includes('already booked')
+                ? 'התור כבר נתפס על ידי לקוח אחר. נא לבחור שעה אחרת'
+                : result.message;
+            showBanner('❌ ' + msg, 'error');
+            state.selectedTime = null;
+            state.isBooking = false;
             await fetchAppointments();
             render();
         }
@@ -632,7 +649,7 @@ function getAvailableSlots(date, duration) {
                         <input type="text" placeholder="שם מלא *" value="${(state.customerInfo.name || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.name=this.value">
                         <input type="tel" placeholder="טלפון *" value="${(state.customerInfo.phone || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.phone=this.value">
                         <input type="email" placeholder="אימייל * (לקבלת אישור וקישור לניהול התור)" value="${(state.customerInfo.email || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.email=this.value">
-                        <button class="btn btn-primary" style="width:100%" onclick="bookAppointment()">אישור</button>
+                        <button class="btn btn-primary" style="width:100%" onclick="bookAppointment()" ${state.isBooking ? 'disabled' : ''}>${state.isBooking ? 'שולח...' : 'אישור'}</button>
                         <div class="summary">
                             <h3>סיכום:</h3>
                             <p>${state.selectedService?.name || ''}</p>
