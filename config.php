@@ -109,10 +109,22 @@ function ensureAppointmentSlotKey($conn) {
     if ($attempted) return true;
     $attempted = true;
     try {
-        $r = $conn->query("SHOW CREATE TABLE appointments");
-        $row = $r ? $r->fetch_assoc() : null;
-        $ddl = isset($row['Create Table']) ? $row['Create Table'] : '';
-        if ($ddl !== '' && strpos($ddl, "concat(`appointment_date`,'_',`start_time`,'_',`status`)") === false) {
+        // Read the real generated expression (format-proof across MySQL/MariaDB)
+        $expr = '';
+        $r = $conn->query("SELECT GENERATION_EXPRESSION AS g FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'appointments' AND COLUMN_NAME = 'slot_key'");
+        if ($r && $row = $r->fetch_assoc()) {
+            $expr = $row['g'] ?? '';
+        }
+        // Fallback: parse SHOW CREATE TABLE
+        if ($expr === '') {
+            $r = $conn->query("SHOW CREATE TABLE appointments");
+            $row = $r ? $r->fetch_assoc() : null;
+            $ddl = $row['Create Table'] ?? '';
+            if (preg_match('/slot_key[^G]*GENERATED[^(]*\((.*?)\)\s*STORED/i', $ddl, $m)) {
+                $expr = $m[1];
+            }
+        }
+        if ($expr !== '' && strpos($expr, 'status') === false) {
             $conn->query("ALTER TABLE appointments MODIFY COLUMN slot_key VARCHAR(64) GENERATED ALWAYS AS (concat(`appointment_date`,'_',`start_time`,'_',`status`)) STORED");
         }
         return true;
