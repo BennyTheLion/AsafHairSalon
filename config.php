@@ -71,6 +71,23 @@ function ensureAdminLogsTable($conn) {
     }
 }
 
+// Adds the cancel_token column to appointments if missing (self-healing).
+// Used for customer cancel/reschedule links in emails. Never throws.
+function ensureAppointmentCancelToken($conn) {
+    static $attempted = false;
+    if ($attempted) return true;
+    $attempted = true;
+    try {
+        $r = $conn->query("SHOW COLUMNS FROM appointments LIKE 'cancel_token'");
+        if ($r && $r->num_rows === 0) {
+            $conn->query("ALTER TABLE appointments ADD COLUMN cancel_token VARCHAR(64) DEFAULT NULL");
+        }
+        return true;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
 // Logging must never break the main flow (booking, forms, admin actions).
 function logAction($action, $details = '') {
     if (!isset($_SESSION['user_id'])) return;

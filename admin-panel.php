@@ -86,6 +86,27 @@ if ($isAdmin && isset($_GET['del_svc'])) {
     header("Location: admin-panel.php?page=services"); exit();
 }
 
+// Cancel appointment (admin) — updates status and sends owner + customer emails
+if ($isAdmin && isset($_GET['cancel_appt'])) {
+    $aid = intval($_GET['cancel_appt']);
+    $r = $conn->query("SELECT * FROM appointments WHERE id=$aid");
+    if ($r && ($a = $r->fetch_assoc())) {
+        $conn->query("UPDATE appointments SET status='cancelled' WHERE id=$aid");
+        require_once __DIR__ . '/email-helpers.php';
+        sendAppointmentEmails('cancel', [
+            'customer' => ['name' => $a['customer_name'], 'phone' => $a['customer_phone'], 'email' => $a['customer_email']],
+            'service'  => ['name' => $a['service_name'], 'duration' => $a['service_duration'], 'price' => $a['service_price']],
+            'date' => $a['appointment_date'],
+            'startTime' => substr($a['start_time'], 0, 5),
+            'endTime' => substr($a['end_time'], 0, 5),
+            'appointmentId' => $a['id'],
+            'cancelToken' => $a['cancel_token']
+        ]);
+        logAction('Cancelled appointment', $a['customer_name'] . ' - ' . $a['appointment_date'] . ' ' . $a['start_time']);
+    }
+    header("Location: admin-panel.php?page=appointments"); exit();
+}
+
 // ===== PAGE SELECTION =====
 $page = $_GET['page'] ?? 'dashboard';
 $allowed = ['dashboard','appointments','categories','services','before-after'];

@@ -445,8 +445,8 @@ function getAvailableSlots(date, duration) {
     
     async function bookAppointment() {
         if (!state.selectedService || !state.selectedDate || !state.selectedTime || 
-            !state.customerInfo.name || !state.customerInfo.phone) {
-            showBanner('❌ נא למלא את כל השדות', 'error');
+            !state.customerInfo.name || !state.customerInfo.phone || !state.customerInfo.email) {
+            showBanner('❌ נא למלא את כל השדות כולל אימייל (לקבלת אישור התור)', 'error');
             return;
         }
         
@@ -486,7 +486,11 @@ function getAvailableSlots(date, duration) {
             showBanner('✅ התור נקבע בהצלחה! ' + appointment.service.name + ' — ' + appointment.date + ' ב-' + appointment.startTime, 'success');
             await fetchAppointments();
             
-             await sendEmail('booking_confirmation', appointment);
+            // Attach id + cancel token so the confirmation email can include
+            // the cancel/reschedule management links.
+            appointment.appointmentId = result.appointment_id;
+            appointment.cancelToken = result.cancel_token;
+            await sendEmail('booking_confirmation', appointment);
              
             state.view = 'success';
             render();
@@ -627,7 +631,7 @@ function getAvailableSlots(date, duration) {
                         <h2>פרטים</h2>
                         <input type="text" placeholder="שם מלא *" value="${(state.customerInfo.name || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.name=this.value">
                         <input type="tel" placeholder="טלפון *" value="${(state.customerInfo.phone || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.phone=this.value">
-                        <input type="email" placeholder="אימייל" value="${(state.customerInfo.email || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.email=this.value">
+                        <input type="email" placeholder="אימייל * (לקבלת אישור וקישור לניהול התור)" value="${(state.customerInfo.email || '').replace(/"/g, '&quot;')}" oninput="state.customerInfo.email=this.value">
                         <button class="btn btn-primary" style="width:100%" onclick="bookAppointment()">אישור</button>
                         <div class="summary">
                             <h3>סיכום:</h3>

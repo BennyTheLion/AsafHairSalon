@@ -68,16 +68,19 @@ try {
     // =========================
     // Insert appointment safely
     // =========================
+    $cancelToken = bin2hex(random_bytes(16)); // for customer cancel/reschedule links
+    ensureAppointmentCancelToken($conn);      // self-healing column (never throws)
+
     $insert = $conn->prepare("
         INSERT INTO appointments 
         (service_id, service_name, service_duration, service_price,
          customer_name, customer_phone, customer_email,
-         appointment_date, start_time, end_time, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')
+         appointment_date, start_time, end_time, status, cancel_token)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', ?)
     ");
 
     $insert->bind_param(
-        "isidssssss",
+        "isidsssssss",
         $service['id'],
         $service['name'],
         $service['duration'],
@@ -87,7 +90,8 @@ try {
         $customer['email'],
         $date,
         $startTime,
-        $endTime
+        $endTime,
+        $cancelToken
     );
 
     if (!$insert->execute()) {
@@ -105,7 +109,8 @@ try {
         "success" => true,
         "message" => "Appointment booked successfully",
         "appointment_id" => $appointmentId,
-        "end_time" => $endTime
+        "end_time" => $endTime,
+        "cancel_token" => $cancelToken
     ]);
 
 } catch(Exception $e) {

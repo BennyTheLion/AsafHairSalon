@@ -40,6 +40,7 @@ CREATE TABLE `appointments` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `status` enum('confirmed','cancelled','completed','no_show') DEFAULT 'confirmed',
+  `cancel_token` varchar(64) DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),

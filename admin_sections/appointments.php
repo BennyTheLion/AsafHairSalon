@@ -29,7 +29,11 @@ for ($d=1;$d<=$dim;$d++){
     echo "<td class=\"$cls\"><b>$d</b>";
     if (isset($appts[$ds])) foreach($appts[$ds] as $a){
         $sc = $a['status']==='confirmed'?'cfm':($a['status']==='completed'?'cmp':'nos');
-        echo "<div class=\"badge $sc\" style=\"display:block;margin:1px 0;text-align:right;\">".htmlspecialchars(substr($a['start_time'],0,5)).' '.htmlspecialchars($a['customer_name'])."</div>";
+        echo "<div class=\"badge $sc\" style=\"display:block;margin:1px 0;text-align:right;\">".htmlspecialchars(substr($a['start_time'],0,5)).' '.htmlspecialchars($a['customer_name']);
+        if ($a['status']==='confirmed') {
+            echo " <a href=\"?page=appointments&cancel_appt=".intval($a['id'])."&month=$cm&year=$cy\" onclick=\"return confirm('לבטל תור זה?')\" style=\"color:#fff;font-weight:bold;text-decoration:none;\" title=\"ביטול תור\">✕</a>";
+        }
+        echo "</div>";
     }
     echo "</td>";
     if ($dc%7==0) echo "</tr><tr>";
